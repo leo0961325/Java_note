@@ -56,25 +56,24 @@ public class TestController {
     }
 
 
+@PostMapping(value = "try_again")
+    public List<PersonResponse> try_again (@RequestBody PersonRequest personRequest) {
 
-    @PostMapping(value = "tryagain")
-    public PersonResponse try_again(@RequestBody PersonRequest personRequest){
+        PersonResponse response = new PersonResponse();
 
-        PersonResponse personResponse = new PersonResponse();
         String name = personRequest.getName();
+        response.setName(name);
 
-        String sex = personRequest.getId().charAt(1) == 49? "男" : "女";
+        String sex = personRequest.getId().charAt(1) ==49?"boy" : "girl";
+        response.setSex(sex);
 
+        List<PersonResponse> responseList = new ArrayList<>();
+        for(int i=0 ; i<=7 ;i++){
+            responseList.add(response);
+        }
 
-        personResponse.setName(name);
-        personResponse.setSex(sex);
-
-
-
-
-        return personResponse;
+        return responseList;
     }
-
 
 
 
