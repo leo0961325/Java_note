@@ -69,7 +69,7 @@ public class UserResponse {
 ``` java
 @Repository
 public interface IUserRepository extends JpaRepository<User,Integer> {
-
+                                                      /**因為這裡是User所以要轉UserResponse*/
     Optional<User> findAllById(Integer id); //JPA
 
     @Query(value= "SELECT * FROM user ",nativeQuery=true)
