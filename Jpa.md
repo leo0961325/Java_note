@@ -76,13 +76,19 @@ import com.example.demo.demo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User,Integer> {
 
-    Optional<User> findAllById(Integer id);
+    Optional<User> findAllById(Integer id); //找單筆
+
+
+
+    List<UserResponse> findAll(); //找全部，並以json印出
 }
+
 ```
 
 > service.IUserService (I)
@@ -90,7 +96,10 @@ public interface IUserRepository extends JpaRepository<User,Integer> {
 package com.example.demo.demo.service;
 
 public interface IUserService {
+    
     String get(Integer id);
+
+    List<User> findData();
 }
 ```
 
@@ -100,35 +109,65 @@ package com.example.demo.demo.service.impl;
 
 import com.example.demo.demo.model.User;
 import com.example.demo.demo.repository.IUserRepository;
+import com.example.demo.demo.response.UserResponse;
 import com.example.demo.demo.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
 
     @Autowired
-    IUserRepository userRepository;
+    IUserRepository iuserRepository;
 
     @Override
     public String get(Integer id) {
-        Optional<User> allById = userRepository.findAllById(id); //Optional容器 <User> =>table
+        Optional<User> allById = iuserRepository.findAllById(id); //Optional容器 <User> =>table
 
         return allById.get().getName();
     }
+
+
+    @Override
+    public List<UserResponse> findData() {
+
+
+        List<UserResponse> responses=new ArrayList<>(); //定義一個responses 的list
+        List<User> findAll = iuserRepository.findAll();
+        for (User user : findAll) { //初始值 : 終值
+            UserResponse userResponse = new UserResponse();
+            userResponse.setName(user.getName()); //把要得裝進去
+            userResponse.setDept(user.getDept());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setPoint(user.getPoint());
+            responses.add(userResponse);
+        }
+
+
+        return responses;
+    }
+
+
 }
+
 ```
 > Controller 層
 
 ```java
 package com.example.demo.demo.controller;
 
+import com.example.demo.demo.model.User;
+import com.example.demo.demo.response.UserResponse;
 import com.example.demo.demo.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -144,8 +183,16 @@ public class UserController {
 
 
         return iUserService.get(id);
-    }
 
+
+
+    }
+    @GetMapping(value = "user/info")
+    public List<UserResponse> info(){
+
+
+        return iUserService.findData();
+    }
 
 }
 
