@@ -45,14 +45,12 @@ public class BookService {
 ``` java
 package com.example.demo.web;
 
-
 import com.example.demo.domain.Book;
 import com.example.demo.domain.BookRepository;
 import com.example.demo.request.BookRequest;
 import com.example.demo.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,7 +92,7 @@ public class WebController {
 
     /**
      *
-     *
+     *  第一種
      *  2020.11.06 我把@Requestbody 拔掉就可以了
      *  然後 回傳值用database
      * **/
@@ -105,7 +103,24 @@ public class WebController {
 
         return bookService.save(book);
     }
+    /***
+     * 這是第二種
+     * 晚上的時候Postman沒有轉換成json
+     * */
+    @PostMapping(value = "books/test")
+    public Book postmann(@RequestBody BookRequest bookRequest){
 
+        Book book = new Book();
+        book.setName(bookRequest.getName());
+        book.setAuthor(bookRequest.getAuthor());
+        book.setLevel(bookRequest.getLevel());
+        book.setReview(bookRequest.getReview());
+        book.setStatus(bookRequest.getStatus());
+
+
+        return bookService.save(book);
+    }
 
 }
+
 ```
